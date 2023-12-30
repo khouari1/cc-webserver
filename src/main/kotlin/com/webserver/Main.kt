@@ -19,8 +19,15 @@ fun main() = runBlocking {
         launch(Dispatchers.Default) {
             accept.use { socket ->
                 BufferedReader(InputStreamReader(socket.inputStream)).use { input ->
-                    val request = input.readLine()
-                    val httpResponse = requestHandler.handleRequest(request)
+                    val requestLines = mutableListOf<String>()
+                    var request = input.readLine()
+                    println("Handling request...")
+                    while (request != "") {
+                        requestLines.add(request)
+                        println(request)
+                        request = input.readLine()
+                    }
+                    val httpResponse = requestHandler.handleRequest(requestLines)
                     BufferedWriter(OutputStreamWriter(socket.getOutputStream())).use { output ->
                         output.write(httpResponse.toResponseString())
                     }

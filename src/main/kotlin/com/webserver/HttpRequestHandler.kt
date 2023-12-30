@@ -6,7 +6,7 @@ class HttpRequestHandler(
     private val webFolder: String,
 ) {
 
-    fun handleRequest(request: String): HttpResponse {
+    fun handleRequest(request: List<String>): HttpResponse {
         val httpRequestResult = HttpRequest.from(request)
         return httpRequestResult.fold(
             ifLeft = { (error, code) ->

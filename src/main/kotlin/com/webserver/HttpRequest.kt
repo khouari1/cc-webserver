@@ -12,8 +12,8 @@ data class HttpRequest(
     val version: String,
 ) {
     companion object {
-        fun from(request: String): Either<HttpRequestParseError, HttpRequest> {
-            val parts = request.split(" ")
+        fun from(request: List<String>): Either<HttpRequestParseError, HttpRequest> {
+            val parts = request.first().split(" ")
             val (method, path, version) = when (parts.size) {
                 3 -> {
                     if (parts[1] == "/") {
