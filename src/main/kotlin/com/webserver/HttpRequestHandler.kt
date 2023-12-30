@@ -22,18 +22,41 @@ class HttpRequestHandler(
     }
 
     private fun handleRequest(httpRequest: HttpRequest): HttpResponse {
-        val resourceUrl = File(webFolder).resolve(httpRequest.path.drop(1))
-        if (!resourceUrl.exists()) {
-            return HttpResponse.Fail(
-                status = 404,
-                content = "Resource not found",
-            )
+        return if (httpRequest.path.startsWith("/cgi-bin")) {
+            handleCgiRequest(httpRequest)
+        } else {
+            val resourceUrl = File(webFolder).resolve(httpRequest.path)
+            if (!resourceUrl.exists()) {
+                HttpResponse.Fail(
+                    status = 404,
+                    content = "Resource not found",
+                )
+            } else {
+                val text = resourceUrl.readText()
+                HttpResponse.Success(
+                    status = 200,
+                    contentType = "text/html",
+                    content = text,
+                )
+            }
         }
-        val text = resourceUrl.readText()
+    }
+
+    private fun handleCgiRequest(httpRequest: HttpRequest): HttpResponse.Success {
+        val process = Runtime.getRuntime().exec(webFolder + httpRequest.path)
+        val builder = StringBuilder()
+        var message = process.inputReader().readLine()
+        while (message != null) {
+            builder.append(message)
+            message = process.inputReader().readLine()
+        }
+        if (process.isAlive) {
+            process.destroy()
+        }
         return HttpResponse.Success(
             status = 200,
             contentType = "text/html",
-            content = text,
+            content = builder.toString(),
         )
     }
 }

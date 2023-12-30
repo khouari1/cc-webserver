@@ -17,7 +17,7 @@ data class HttpRequest(
             val (method, path, version) = when (parts.size) {
                 3 -> {
                     if (parts[1] == "/") {
-                        listOf(parts[0], "/www/index.html", parts[2])
+                        listOf(parts[0], "index.html", parts[2])
                     } else {
                         parts
                     }

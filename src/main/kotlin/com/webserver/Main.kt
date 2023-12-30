@@ -11,7 +11,7 @@ import java.net.ServerSocket
 
 fun main() = runBlocking {
     val port = Integer.parseInt(System.getProperty("serverPort", "80"))
-    val webFolder = System.getProperty("webFolder", Thread.currentThread().contextClassLoader.getResource("").path)
+    val webFolder = System.getProperty("webFolder", "www")
     val server = ServerSocket(port)
     val requestHandler = HttpRequestHandler(webFolder)
     while (true) {
